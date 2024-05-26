@@ -1,85 +1,42 @@
-const userData = require('../models/user')
+const user = require('../models/user')
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs');
-const user = require('../models/user');
-
+JWT_SEC="ilovenolove"
 
 exports.register = async (req, res) => {
-
+ 
+    
     const { name, email, password } = req.body;
+   
 
     try {
 
-
-
-        const User = await userData.findOne({ email })
+      const User =await user.findOne({email})
 
 
         if (User) {
-            return res.status(400).json({ message: "user already exit" })
+      
+            res.status(300).json({
+                success:false,
+                message:"user exist"
+            })
         }
         else {
 
-            const data = await userData.create({
-                name,
-                avtar: {
-                    public_id: "publicID",
-                    url: "thtt://veea.com"
-                },
-                email,
-                password
 
+
+         const small = new user({ name,email,password });
+             
+        small.save().then(()=>{
+            res.status(200).json({
+                success:true,
+                message:"user created successfully"
             })
+        });
+
+    
 
         }
-
-
-        //login after register 
-
-        const user = await userData.findOne({ email })
-        console.log(user)
-
-        if (!user) {
-
-            return res.status(400).json({
-                success: false,
-                message: "user not found"
-            })
-
-        }
-
-
-        const isMatch = await bcrypt.compare(password, user.password)
-
-        if (!isMatch) {
-            return res.status(400).json({
-                success: "fail",
-                message: "wrong password"
-
-            })
-        }
-
-        const token = jwt.sign({
-            _id: user._id
-        },
-            process.env.JWT_SEC
-        )
-
-        const option = {
-            expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-            httpOnly: true
-
-        }
-
-
-        res.status(201).cookie("token", token, option).json({
-            success: true,
-            data: user,
-            token
-        })
-
-
-
 
 
     } catch (error) {
@@ -99,9 +56,10 @@ exports.login = async (req, res) => {
 
     const { email, password } = req.body;
 
-    const user = await userData.findOne({ email })
+    const User =await user.findOne({email})
 
-    if (!user) {
+    console.log(User)
+    if (!User) {
 
         return res.status(400).json({
             success: false,
@@ -113,7 +71,7 @@ exports.login = async (req, res) => {
     }
 
 
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = await bcrypt.compare(password, User.password)
 
     if (!isMatch) {
         return res.status(400).json({
@@ -124,18 +82,18 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({
-        _id: user._id
+        _id: User._id
     },
-        process.env.JWT_SEC
+        JWT_SEC
     )
 
     const option = {
-        expires: Date.now + 90 * 24 * 60 * 60 * 1000,
+        // expires: Date.now + 90 * 24 * 60 * 60 * 1000,
         httpOnly: true
     }
     res.status(200).cookie("token", token, option).json({
         success: true,
-        data: user,
+        data: User,
         token
     })
 

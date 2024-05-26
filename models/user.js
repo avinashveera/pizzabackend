@@ -8,11 +8,6 @@ const userSchema=mongoose.Schema({
        required:[true,"enter a name"],
 
     },
-
-    avtar:{
-        public_id:String,
-        url:String
-    },
     email:{
     type:String,
     required:[true,"enter a email"],
@@ -21,30 +16,18 @@ const userSchema=mongoose.Schema({
 password:{
     type:String,
     required:[true,"please enter a password"],
-    minlength:[6,"please enter 6 letter password"],
 
 },
 
-posts:[
-    {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"post"
-    }
+cart:[
+   {
+    img:String,
+    name:String,
+    price:Number,
+    quantity:Number
+   }
 ],
 
-followers:[
-    {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"user"
-    }
-],
-
-following:[
-    {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"user"
-    }
-]
 
 })
 
