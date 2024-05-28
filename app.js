@@ -6,6 +6,8 @@ const user=require('./routes/user')
 const { json } = require('express');
 const cookieParser =require('cookie-parser')
 const db =require('./config/database');
+var cors = require('cors');
+
 
 dotenv.config({path:"./config/.env"})
 
@@ -19,7 +21,24 @@ const PORT=5000
      console.log(`port is running on ${PORT}`)
  })
 
-
+ app.use(cors());
+ app.options("", cors());
+ app.use(function (req, res, next) 
+ {
+       res.header("Access-Control-Allow-Origin", "");
+       res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+       res.header("Access-Control-Allow-Headers","Origin,X-Requested-With, X-CallbackType, Content-Type, Accept");
+       res.header("Cache-Control", "no-cache");
+       if ("OPTIONS" == req.method) 
+       {
+           res.send(200);
+       }
+       else 
+      {
+        next();
+      }
+ });
+ 
 
 app.get('/',(req,res)=>{
     console.log("hiiii")
